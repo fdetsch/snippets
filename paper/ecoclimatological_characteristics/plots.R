@@ -92,6 +92,11 @@ plt <- spTransform(plt, CRS(projection(rst[[1]])))
 wh <- list(c(22, 17), c(22, 30), c(22, 17), c(22, 30), c(22, 25), 
            c(22, 20), c(22, 18), c(22, 19), c(22, 20), c(22, 17), 
            c(22, 20), c(22, 19))
+wh <- list(c(12.19, 8.28)*2, c(22, 30), c(12.28, 8.44)*2, c(22, 30), c(12.2, 11.9)*2, 
+           c(11, 8.65)*2, c(11.3, 8.3)*2, c(11.3, 8.15)*2, c(10.92, 8.63)*2, c(13.4, 8.8)*2, 
+           c(10.9, 8.4)*2, c(11.7, 8.4)*2)
+
+
 
 # Plot names for image storage
 fn <- as.list(substr(basename(fls.rst), 1, 
@@ -114,21 +119,21 @@ foreach(i = rst, j = fn, k = wh, .packages = lib) %dopar% {
   rst.df.mrg$luc <- factor(rst.df.mrg$luc, 
                            levels = sort(levels(rst.df.mrg$luc)))
   
-#   # 'ggplot'
-#   png(paste0("out/", j, ".png"), width = k[1], height = k[2], units = "cm", 
-#       pointsize = 12, res = 300)
-#   print(ggplot() + 
-#           geom_tile(aes(x = x, y = y, fill = luc), data = rst.df.mrg) + 
-#           geom_point(aes(x = Easting, y = Northing), data = plt.crp, 
-#                      shape = 24, size = 7, fill = "black") + 
-#           geom_point(aes(x = Easting, y = Northing), data = plt.crp, 
-#                      shape = 24, size = 5, fill = "grey75") + 
-#           scale_fill_manual("Land-cover types", values = col) + 
-#           scale_x_continuous(expand = c(0, 0)) +
-#           scale_y_continuous(expand = c(0, 0)) + 
-#           theme_bw() + 
-#           theme(legend.background = element_rect(fill = "gray95")))
-#   dev.off()
+  # 'ggplot'
+  png(paste0("out/", j, ".png"), width = k[1], height = k[2], units = "cm", 
+      pointsize = 12, res = 300)
+  print(ggplot() + 
+          geom_tile(aes(x = x, y = y, fill = luc), data = rst.df.mrg) + 
+          geom_point(aes(x = Easting, y = Northing), data = plt.crp, 
+                     shape = 24, size = 7, fill = "black") + 
+          geom_point(aes(x = Easting, y = Northing), data = plt.crp, 
+                     shape = 24, size = 5, fill = "grey75") + 
+          scale_fill_manual("Land-cover types", values = col) + 
+          scale_x_continuous(expand = c(0, 0)) +
+          scale_y_continuous(expand = c(0, 0)) + 
+          theme_bw() + 
+          theme(legend.background = element_rect(fill = "gray95")))
+  dev.off()
   
 #   # Corresponding ASTER image
 #   rst.ast <- crop(rst.ast.mrg, i, format = "GTiff", overwrite = TRUE, 
@@ -155,6 +160,8 @@ foreach(i = rst, j = fn, k = wh, .packages = lib) %dopar% {
 #   dev.off()
 
   # Corresponding Google images
+  i.ll <- projectExtent(i, crs = CRS("+init=epsg:4326"))
+    
   rst.dsm <- gmap(extent(i.ll), type = "satellite", scale = 2, rgb = TRUE)
   rst.dsm <- projectRaster(rst.dsm, crs = CRS(projection(i)), method = "ngb")
   writeRaster(rst.dsm, filename = paste0("out/", substr(j, 1, 5), "DSM"), 
@@ -162,7 +169,10 @@ foreach(i = rst, j = fn, k = wh, .packages = lib) %dopar% {
 
   png(paste0("out/", substr(j, 1, 5), "DSM.png"), width = k[1], height = k[2], 
       units = "cm", pointsize = 12, res = 300)
-  plotRGB(rst.osm)
+  plotRGB(rst.dsm)
   dev.off()
 
 }
+
+# Deregister parallel backend
+stopCluster(cl)
