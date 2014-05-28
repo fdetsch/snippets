@@ -5,7 +5,7 @@ switch(Sys.info()[["sysname"]],
        "Windows" = setwd("E:/"), 
        "Linux" = setwd("/media/permanent/"))
 
-lib <- c("randomForest", "ggplot2")
+lib <- c("randomForest", "ggplot2", "latticeExtra")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 
 source("phd/scintillometer/src/slsMergeDailyData.R")
@@ -24,30 +24,11 @@ lapply(srunWorkspaces, function(i) {
   dat <- slsMergeDailyData(files = fls, 
                            equal.columns = FALSE)
   
-  #   # Subset columns relevant for randomForest algorithm
-  #   dat2 <- dat[, c("tempUp", "tempLw", "dwnRad", "upwRad", 
-  #                   "soilHeatFlux", "pressure", "waterET")]
-  #   dat2 <- dat2[complete.cases(dat2), ]
-  #   dat2$waterET <- factor(dat2$waterET)
-  #   
-  #   set.seed(10)
-  #   index <- sample(1:nrow(dat2), 1000)
-  #   
-  #   train <- dat2[-index, ]
-  #   test <- dat2[index, ]
-  #   
-  #   rf <- randomForest(waterET ~ ., data = train)
-  #   
-  #   pred <- predict(rf, test)
-  #   
-  #   plot(as.numeric(levels(pred)) ~ as.numeric(levels(test$waterET)), 
-  #        main = plt)
-  
   # Create continuous time series
   time.seq <- strptime(dat$datetime[!is.na(dat$datetime)], 
                        format = "%Y-%m-%d %H:%M:%S")
   time.seq <- strftime(seq(min(time.seq), max(time.seq), 60), 
-  
+                       
                        format = "%Y-%m-%d %H:%M:%S")
   
   dat2 <- merge(data.frame(datetime = time.seq), 
@@ -89,7 +70,7 @@ lapply(srunWorkspaces, function(i) {
   
   write.csv(dat4, paste0(i, "/data/out/", plt, "_mrg_rf_agg01h.csv"), 
             row.names = FALSE)
-
+  
   # 10m aggregation
   dat5 <- aggregate(dat3[, 2:ncol(dat3)], by = list(substr(dat3[, 1], 1, 15)), 
                     FUN = function(x) round(mean(x, na.rm = TRUE), 1))

@@ -2,7 +2,8 @@ slsMergeDailyData <- function(files,
                               equal.columns = TRUE,
                               ...) {
   
-  stopifnot(require(foreach))
+  lib <- c("foreach", "plyr")
+  sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
   
   dat <- foreach(i = files, j = seq(files)) %do% {
     
