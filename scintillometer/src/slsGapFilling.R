@@ -22,7 +22,7 @@ lapply(srunWorkspaces, function(i) {
   
   # Merge daily .mnd files
   dat <- slsMergeDailyData(files = fls, 
-                           equal.columns = FALSE)
+                           equal.columns = ifelse(plt == "gra1", FALSE, TRUE))
   
   # Create continuous time series
   time.seq <- strptime(dat$datetime[!is.na(dat$datetime)], 
@@ -80,10 +80,10 @@ lapply(srunWorkspaces, function(i) {
   write.csv(dat5, paste0(i, "/data/out/", plt, "_mrg_rf_agg10m.csv"), 
             row.names = FALSE)
   
-  ggplot(aes(x = datetime, y = waterET), data = dat4) + 
-    geom_histogram(stat = "identity") + 
-    geom_hline(aes(y = 0), colour = "darkgrey") + 
-    labs(x = "Time [h]", y = "Evapotranspiration [mm/h]") + 
-    theme_bw()
+#   ggplot(aes(x = datetime, y = waterET), data = dat4) + 
+#     geom_histogram(stat = "identity") + 
+#     geom_hline(aes(y = 0), colour = "darkgrey") + 
+#     labs(x = "Time [h]", y = "Evapotranspiration [mm/h]") + 
+#     theme_bw()
   
 })

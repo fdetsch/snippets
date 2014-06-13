@@ -35,7 +35,22 @@ slsMergeDailyData <- function(files,
     dat <- rbind.fill(dat)
   }
   
+  # Remove rows with time == NA
+  if (length(which(is.na(dat$time))) > 0)
+    dat <- dat[-which(is.na(dat$time)), ]
+  # Order data by datetime
   dat <- dat[order(dat$datetime), ]
   
+  # Continuous time series(i.e., begin 0:00 -> end 23:59)
+  st <- paste(substr(dat$datetime[1], 1, 10), "00:00:00")
+  nd <- paste(substr(dat$datetime[nrow(dat)], 1, 10), "23:59:00")
+  
+  st.nd <- seq(strptime(st, format = "%Y-%m-%d %H:%M:%S"), 
+               strptime(nd, format = "%Y-%m-%d %H:%M:%S"), 60)
+  st.nd <- strftime(st.nd, format = "%Y-%m-%d %H:%M:%S")
+  
+  dat <- merge(data.frame(datetime = st.nd), dat, all.x = TRUE)
+  
+  # Return merged and continuous time series
   return(dat)
 }
