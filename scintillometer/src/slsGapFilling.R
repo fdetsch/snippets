@@ -1,17 +1,21 @@
-# Environmental stuff
+### Environmental stuff
+
 rm(list = ls(all = TRUE))
 
 switch(Sys.info()[["sysname"]], 
-       "Windows" = setwd("E:/"), 
-       "Linux" = setwd("/media/permanent/"))
+       "Windows" = setwd("F:/kilimanjaro/evapotranspiration"), 
+       "Linux" = setwd("/media/XChange/kilimanjaro/evapotranspiration"))
 
 lib <- c("randomForest", "ggplot2", "latticeExtra")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 
-source("phd/scintillometer/src/slsMergeDailyData.R")
+source("scintillometer/src/slsMergeDailyData.R")
 
-srunWorkspaces <- dir("SRun/", pattern = "workspace_SLS", recursive = FALSE, 
-                      full.names = TRUE)
+srunWorkspaces <- dir("scintillometer/SRun/", pattern = "workspace_SLS", 
+                      recursive = FALSE, full.names = TRUE)
+
+
+### Data processing 
 
 lapply(srunWorkspaces, function(i) {
   
@@ -28,7 +32,6 @@ lapply(srunWorkspaces, function(i) {
   time.seq <- strptime(dat$datetime[!is.na(dat$datetime)], 
                        format = "%Y-%m-%d %H:%M:%S")
   time.seq <- strftime(seq(min(time.seq), max(time.seq), 60), 
-                       
                        format = "%Y-%m-%d %H:%M:%S")
   
   dat2 <- merge(data.frame(datetime = time.seq), 
