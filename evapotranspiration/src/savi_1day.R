@@ -139,6 +139,11 @@ rst.b1.b2.agg <-
 
 ### Results
 
+ndvi <- (rst.b1.b2.agg[[2]]-rst.b1.b2.agg[[1]]) / 
+  (rst.b1.b2.agg[[2]]+rst.b1.b2.agg[[1]])
+writeRaster(ndvi, "myd09gq/processed/NDVI", bylayer = TRUE, format = "GTiff", 
+            suffix = names(ndvi), overwrite = TRUE)
+
 savi <- 1.5 * (rst.b1.b2.agg[[2]]-rst.b1.b2.agg[[1]]) / 
   (rst.b1.b2.agg[[2]]+rst.b1.b2.agg[[1]]+0.5)
 writeRaster(savi, "myd09gq/processed/SAVI", bylayer = TRUE, format = "GTiff", 
