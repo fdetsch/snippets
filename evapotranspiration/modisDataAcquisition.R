@@ -1,13 +1,21 @@
+# install.packages("devtools")
+# library(devtools)
+# install_github("Rsenal", "environmentalinformatics-marburg")
 library(Rsenal)
+library(MODIS)
 
-setwd("F:/kilimanjaro/evapotranspiration")
+switch(Sys.info()[["sysname"]], 
+       "Linux" = setwd("/media/fdetsch/XChange/kilimanjaro/evapotranspiration/"), 
+       "Windows" = setwd("D:/kilimanjaro/evapotranspiration/"))
 
 MODISoptions(localArcPath = "MODIS_ARC", 
              outDirPath = "MODIS_ARC/PROCESSED")
 
-modisDownload(modis.products = c("MOD13Q1", "MYD13Q1"), 
+modisDownload(modis.products = c("MYD09GA"), 
               modis.download.only = FALSE, 
               modis.outproj = "EPSG:32737", 
+              begin = "2013001", end = "2013365", 
               tileH = 21, tileV = 9, 
-              begin = "2013001", 
-              job = "EVIkili", SDSstring = "011000000011")
+              job = "SR1km", SDSstring = "010000000000000001000")
+
+# 010000000000000001000 for MYD09GA
