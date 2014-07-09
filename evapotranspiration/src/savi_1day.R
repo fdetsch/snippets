@@ -88,7 +88,7 @@ rst.b1.b2.cc <- foreach(i = c(1, 2)) %do% {
                   state <- paste(bit[c(15, 16)], 
                                  collapse = "") %in% c("00", "11", "10")
                   # # Shadow
-                  # shadow <- number2binary(i, 16)[14] == 0
+                  # shadow <- bit[14] == 0
                   # Cirrus
                   cirrus <- paste(bit[c(7, 8)], 
                                   collapse = "") %in% c("00", "01")
@@ -136,16 +136,25 @@ rst.b1.b2.agg <-
     }
   }
 
+rst.b1.b2.agg <- 
+  foreach(i = c("^AGG.*b01", "^AGG.*b02")) %do% {
+    fls <- list.files("myd09gq/processed", pattern = i, full.names = TRUE)
+    return(stack(fls))
+  }
 
 ### Results
 
 ndvi <- (rst.b1.b2.agg[[2]]-rst.b1.b2.agg[[1]]) / 
   (rst.b1.b2.agg[[2]]+rst.b1.b2.agg[[1]])
+ndvi <- round(ndvi, digits = 2)
+for (i in 1:nlayers(ndvi))
+  ndvi[[i]][ndvi[[i]][] > 1] <- 1
 writeRaster(ndvi, "myd09gq/processed/NDVI", bylayer = TRUE, format = "GTiff", 
             suffix = names(ndvi), overwrite = TRUE)
 
 savi <- 1.5 * (rst.b1.b2.agg[[2]]-rst.b1.b2.agg[[1]]) / 
   (rst.b1.b2.agg[[2]]+rst.b1.b2.agg[[1]]+0.5)
+savi <- round(savi, digits = 2)
 writeRaster(savi, "myd09gq/processed/SAVI", bylayer = TRUE, format = "GTiff", 
             suffix = names(savi), overwrite = TRUE)
 
