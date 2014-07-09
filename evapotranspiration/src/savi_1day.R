@@ -16,7 +16,7 @@ sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 source("src/number2binary.R")
 
 # Parallelization
-registerDoParallel(cl <- makeCluster(4))
+registerDoParallel(cl <- makeCluster(3))
 
 
 ### Data processing
@@ -122,8 +122,8 @@ rst.b1.b2.cc <-
 
 ## Aggregation on monthly values
 
-indices <- as.numeric(as.factor(as.yearmon(seq(as.Date("2013-01-01"), 
-                                               as.Date("2013-02-28"), 1))))
+time.range <- seq(as.Date("2013-01-01"), as.Date("2013-12-31"), 1)
+indices <- as.numeric(as.factor(as.yearmon(time.range)))
 
 rst.b1.b2.agg <- 
   foreach(i = c(1, 2), .packages = lib) %dopar% {
