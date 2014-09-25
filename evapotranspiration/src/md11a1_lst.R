@@ -20,8 +20,8 @@ doy <- substr(basename(fls.lst.day), 10, 16)
 
 rst.lst.day <- 
   stack(foreach(i = fls.lst.day, .packages = lib) %dopar% {
-    crop((raster(i) * 0.02 - 273.15), template.rst.utm, 
-         filename = paste0("md11a2/processed/CRP_", basename(i)), 
+    crop((raster(i) * 0.02), template.rst.utm, 
+         filename = paste0("md11a1/processed/CRP_", basename(i)), 
          overwrite = TRUE)
   })
 
@@ -32,7 +32,7 @@ indices <- as.numeric(as.factor(doy))
 start.day <- sapply(unique(indices), function(i) which(indices == i)[1])
 rst.lst.day.mrg <- 
   stackApply(rst.lst.day, indices, fun = max, na.rm = TRUE, 
-             filename = "md11a2/processed/MRG", 
+             filename = "md11a1/processed/MRG", 
              overwrite = TRUE, format = "GTiff", bylayer = TRUE, 
              suffix = gsub("MOD11A1", "MD11A1", names(rst.lst.day)[start.day]))
 
@@ -41,21 +41,21 @@ indices <- as.numeric(as.factor(as.yearmon(time.range)))
 start.month <- sapply(unique(indices), function(i) which(indices == i)[1])
 rst.lst.mth <- 
   stackApply(rst.lst.day.mrg, indices, fun = function(...) mean(...), 
-             na.rm = TRUE, filename = "md11a2/processed/AGG1MTH", 
+             na.rm = TRUE, filename = "md11a1/processed/AGG1MTH", 
              overwrite = TRUE, format = "GTiff", bylayer = TRUE, 
              suffix = names(rst.lst.day.mrg)[start.month])
 
-rst.lst.mth <- stack(list.files("md11a2/processed", pattern = "^AGG1MTH.*.tif$", 
+rst.lst.mth <- stack(list.files("md11a1/processed", pattern = "^AGG1MTH.*.tif$", 
                                 full.names = TRUE))
 
 # Resample 1km LST raster do 250m (SAVI, NDVI, LAI, etc.) resolution
 rst.lst.mth.rsmpl <- 
   round(disaggregate(rst.lst.mth, fact = 4, method = "bilinear", 
-               filename = "md11a2/processed/RSMPL", overwrite = TRUE, 
+               filename = "md11a1/processed/RSMPL", overwrite = TRUE, 
                format = "GTiff", bylayer = TRUE, suffix = names(rst.lst.mth)), 
         digits = 1)
 
-writeRaster(rst.lst.mth.rsmpl, filename = "md11a2/processed/RSMPL", 
+writeRaster(rst.lst.mth.rsmpl, filename = "md11a1/processed/RSMPL", 
             bylayer = TRUE, overwrite = TRUE, format = "GTiff", 
             suffix = names(rst.lst.mth.rsmpl))
 

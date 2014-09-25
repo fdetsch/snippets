@@ -36,6 +36,9 @@ f.g <- f.apar / f.ipar
 k.par <- 0.5
 lai <- (-1) * log(1 - f.c) / k.par
 
+lai <- writeRaster(lai, "model_input/lai_13", format = "GTiff", 
+                   overwrite = TRUE, bylayer = FALSE)
+
 # T_opt (air temperature in the month when NDVI reaches annual maximum, 
 # definition taken from Potter et al., 1993), based on T_max (average monthly
 # maximum daily air temperature) at peak NDVI
