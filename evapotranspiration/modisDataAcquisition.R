@@ -13,8 +13,9 @@ MODISoptions(localArcPath = "MODIS_ARC",
 
 modisDownload(modis.products = c("MYD09GA"), 
               modis.download.only = FALSE, 
-              modis.outproj = "EPSG:32737", 
-              begin = "2013001", end = "2013365", 
+              modis.outproj = "EPSG:21037", 
+              begin = "2014002", 
+#               end = "2002365", 
               tileH = 21, tileV = 9, 
               job = "SR1km", SDSstring = "010000000000000001000")
 
