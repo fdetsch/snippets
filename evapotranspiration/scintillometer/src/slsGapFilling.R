@@ -48,7 +48,7 @@ lapply(srunWorkspaces, function(i) {
   index <- rowSums(is.na(dat2[, 2:(ncol(dat2)-1)])) == 0 & 
     is.na(dat2[, ncol(dat2)])
   
-  dat2$waterET <- factor(dat2$waterET)
+#   dat2$waterET <- factor(dat2$waterET)
   
   dat2.train <- dat2[complete.cases(dat2[, -1]), 2:ncol(dat2)]
   dat2.test <- dat2[index, ]
@@ -65,7 +65,7 @@ lapply(srunWorkspaces, function(i) {
   
   # 1h aggregation  
   dat4 <- aggregate(dat3[, 2:ncol(dat3)], by = list(substr(dat3[, 1], 1, 13)), 
-                    FUN = function(x) round(mean(x, na.rm = TRUE), 1))
+                    FUN = function(x) round(median(x, na.rm = TRUE), 2))
   dat4[, 1] <- paste0(dat4[, 1], ":00")
   names(dat4)[1] <- "datetime"
   dat4$datetime <- strptime(dat4$datetime, format = "%Y-%m-%d %H:%M")
@@ -76,7 +76,7 @@ lapply(srunWorkspaces, function(i) {
   
   # 10m aggregation
   dat5 <- aggregate(dat3[, 2:ncol(dat3)], by = list(substr(dat3[, 1], 1, 15)), 
-                    FUN = function(x) round(mean(x, na.rm = TRUE), 1))
+                    FUN = function(x) round(median(x, na.rm = TRUE), 2))
   dat5[, 1] <- paste0(dat5[, 1], "0")
   names(dat5)[1] <- "datetime"
   

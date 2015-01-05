@@ -2,16 +2,16 @@
 rm(list = ls(all = TRUE))
 
 switch(Sys.info()[["sysname"]], 
-       "Windows" = setwd("F:/kilimanjaro/evapotranspiration"), 
-       "Linux" = setwd("/media/dogbert/XChange/kilimanjaro/evapotranspiration"))
+       "Windows" = setwd("D:/kilimanjaro/evapotranspiration"), 
+       "Linux" = setwd("/media/fdetsch/XChange/kilimanjaro/evapotranspiration"))
 
 lib <- c("randomForest", "matrixStats", "foreach", "ggplot2", "latticeExtra")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 
 source("scintillometer/src/slsMergeDailyData.R")
 
-srunWorkspaces <- dir("SRun/", pattern = "workspace_SLS", recursive = FALSE, 
-                      full.names = TRUE)
+srunWorkspaces <- dir("scintillometer/SRun/", pattern = "workspace_SLS", 
+                      recursive = FALSE, full.names = TRUE)
 
 fls <- list.files(pattern = "_mrg_rf_agg01h.csv", recursive = TRUE, 
                   full.names = TRUE)
@@ -23,6 +23,7 @@ dat <- do.call("rbind", lapply(fls, function(i) {
 }))
 dat$datetime <- strptime(dat$datetime, format = "%Y-%m-%d %H:%M")
 
+# Separate black histograms per sampled plot
 png("scintillometer/out/slsCompareLucHist.png", width = 25, height = 30, 
     units = "cm", res = 300, pointsize = 18)
 ggplot(aes(x = datetime, y = waterET), data = dat) + 
@@ -60,7 +61,7 @@ dat <- do.call("rbind", lapply(plt, function(i) {
   ))
 }))
 
-dat$hour <- as.factor(substr(dat$time, 1, 2))
+dat$hour <- as.factor(as.numeric(substr(dat$time, 1, 2)))
 
 dat$facet <- "SAV0 vs. MAI0"
 dat$facet[dat$plotid %in% c("sav5", "mai4")] <- "SAV5 vs. MAI4"
@@ -71,16 +72,16 @@ dat$facet <- factor(dat$facet, levels = c("SAV0 vs. MAI0", "SAV5 vs. MAI4",
 
 dat$luc <- factor(substr(dat$plotid, 1, 3), levels = c("sav", "mai", "gra", "cof"))
 
-png("scintillometer/out/slsCompareLucBoxp.png", width = 25, height = 18, 
-    units = "cm", res = 300, pointsize = 16)
+png("scintillometer/out/slsCompareLucBoxp.png", width = 33, height = 18, 
+    units = "cm", res = 300, pointsize = 15)
 ggplot(aes(x = hour, y = waterET, fill = luc), data = dat) + 
   geom_boxplot(outlier.colour = NA, notch = TRUE) + 
   facet_wrap(~ facet) +
-  scale_fill_manual("Land-cover type", 
+  scale_fill_manual("Land-cover \ntype", 
                     values = c("darkgoldenrod", "darkolivegreen", 
                                "chartreuse", "burlywood4")) +
   ylim(-.05, 1) +
-  labs(x = "Hour of day", y = "Evapotranspiration [mm/h]") + 
+  labs(x = "Hour of day", y = "ET (mm/h)") + 
   theme_bw()
 dev.off()
 
