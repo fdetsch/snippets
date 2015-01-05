@@ -3,14 +3,12 @@ rm(list = ls(all = TRUE))
 
 switch(Sys.info()[["sysname"]], 
        "Windows" = setwd("D:/kilimanjaro/evapotranspiration"), 
-       "Linux" = setwd("/media/fdetsch/XChange/kilimanjaro/evapotranspiration"))
+       "Linux" = setwd("/media/envin/XChange/kilimanjaro/evapotranspiration"))
 
 lib <- c("randomForest", "matrixStats", "foreach", "ggplot2", "latticeExtra")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 
-source("scintillometer/src/slsMergeDailyData.R")
-
-srunWorkspaces <- dir("scintillometer/SRun/", pattern = "workspace_SLS", 
+srunWorkspaces <- dir("scintillometer/SRun", pattern = "workspace_SLS", 
                       recursive = FALSE, full.names = TRUE)
 
 fls <- list.files(pattern = "_mrg_rf_agg01h.csv", recursive = TRUE, 
@@ -36,7 +34,8 @@ dev.off()
 
 # Compare boxplot time series of corresponding natural and disturbed LUCs
 fls <- list.files(pattern = "mrg.csv", recursive = TRUE, full.names = TRUE)
-plt <- c("sav0", "mai0", "sav5", "mai4", "gra1", "cof3", "gra2", "cof2")
+plt <- c("sav0", "mai0", "sav5", "mai4", "gra1", "cof3", "gra2", "cof2", 
+         "fer0", "fed1")
 
 dat <- do.call("rbind", lapply(plt, function(i) {
   # Import current LUC
@@ -89,10 +88,12 @@ dev.off()
 cols <- c("sav0" = "darkgoldenrod", "mai0" = "darkolivegreen", 
           "sav5" = "darkgoldenrod", "mai4" = "darkolivegreen", 
           "gra1" = "chartreuse", "cof3" = "burlywood4", 
-          "gra2" = "chartreuse", "cof2" = "burlywood4")
+          "gra2" = "chartreuse", "cof2" = "burlywood4", 
+          "fer0" = "darkolivegreen3", "fed1" = "darkgoldenrod1")
 
 foreach(h = list(c("sav0", "mai0"), c("sav5", "mai4"), 
-                 c("gra1", "cof3"), c("gra2", "cof2"))) %do% {
+                 c("gra1", "cof3"), c("gra2", "cof2"), 
+                 c("fer0", "fed1"), "hel1")) %do% {
                    
   dat <- do.call("rbind", lapply(h, function(i) {
     # Import current LUC
@@ -125,7 +126,7 @@ foreach(h = list(c("sav0", "mai0"), c("sav5", "mai4"),
     geom_boxplot(outlier.colour = NA, notch = TRUE) + 
     scale_fill_manual("PlotID", values = cols) +
     ylim(-.05, 1) +
-    labs(x = "Hour of day", y = "Evapotranspiration [mm/h]") + 
+    labs(x = "\nHour of day", y = "Evapotranspiration [mm/h]\n") + 
     theme_bw())
   dev.off()
 }

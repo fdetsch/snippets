@@ -1,24 +1,16 @@
 switch(Sys.info()[["sysname"]], 
-       "Windows" = setwd("E:/"), 
-       "Linux" = setwd("/media/permanent/"))
+       "Windows" = setwd("D:/kilimanjaro/evapotranspiration"), 
+       "Linux" = setwd("/media/envin/XChange/kilimanjaro/evapotranspiration"))
 
-srunWorkspaces <- dir("SRun/", pattern = "workspace_SLS", recursive = FALSE, 
-                      full.names = TRUE)
+srunWorkspaces <- dir("scintillometer/SRun", pattern = "workspace_SLS", 
+                      recursive = FALSE, full.names = TRUE)
 
-# setwd("SRun/workspace_SLS_cof3_20140311/")
-# setwd("SRun/workspace_SLS_gra2_20140317/")
-# setwd("SRun/workspace_SLS_cof2_20140322/")
-# setwd("SRun/workspace_SLS_sav0_20140505/")
-# setwd("SRun/workspace_SLS_sav5_20140509/")
-# setwd("SRun/workspace_SLS_mai4_20140513/")
-# setwd("SRun/workspace_SLS_mai0_20140517/")
-
-setwd(srunWorkspaces[5])
+setwd(srunWorkspaces[3])
 
 lib <- c("foreach", "plyr", "ggplot2", "reshape2")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
 
-source("../../phd/scintillometer/src/tsOutliers.R")
+source("../../src/tsOutliers.R")
 
 fls <- list.files("data/retrieved_SPU-111-230", pattern = ".mnd$", 
                   full.names = TRUE)
@@ -85,3 +77,4 @@ ggplot(aes(x = datetime, y = value),
   geom_point(size = .1) + 
   facet_wrap(~ variable, ncol = 2, scales = "free")
 
+# Plot diurnal variation 

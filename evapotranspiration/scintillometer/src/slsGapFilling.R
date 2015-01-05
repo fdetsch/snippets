@@ -4,7 +4,7 @@ rm(list = ls(all = TRUE))
 
 switch(Sys.info()[["sysname"]], 
        "Windows" = setwd("F:/kilimanjaro/evapotranspiration"), 
-       "Linux" = setwd("/media/XChange/kilimanjaro/evapotranspiration"))
+       "Linux" = setwd("/media/envin/XChange/kilimanjaro/evapotranspiration"))
 
 lib <- c("randomForest", "ggplot2", "latticeExtra")
 sapply(lib, function(x) stopifnot(require(x, character.only = TRUE)))
@@ -17,8 +17,7 @@ srunWorkspaces <- dir("scintillometer/SRun/", pattern = "workspace_SLS",
 
 ### Data processing 
 
-lapply(srunWorkspaces, function(i) {
-  
+ls_rf_agg10m <- lapply(srunWorkspaces, function(i) {
   plt <- sapply(strsplit(basename(i), "_"), "[[", 3)
   
   fls <- list.files(paste0(i, "/data/retrieved_SPU-111-230"), pattern = ".mnd$", 
@@ -26,7 +25,7 @@ lapply(srunWorkspaces, function(i) {
   
   # Merge daily .mnd files
   dat <- slsMergeDailyData(files = fls, 
-                           equal.columns = ifelse(plt == "gra1", FALSE, TRUE))
+                           equal.columns = ifelse(plt %in% c("gra1", "fer0"), FALSE, TRUE))
   
   # Create continuous time series
   time.seq <- strptime(dat$datetime[!is.na(dat$datetime)], 
@@ -44,11 +43,29 @@ lapply(srunWorkspaces, function(i) {
   if (!file.exists(paste0(i, "/data/out")))
     dir.create(paste0(i, "/data/out"))
   write.csv(dat2, paste0(i, "/data/out/", plt, "_mrg.csv"), row.names = FALSE)
+
+  # 1h aggregation of gappy time series
+  dat2_agg1h <- aggregate(dat2[, 2:ncol(dat2)], by = list(substr(dat2[, 1], 1, 13)), 
+                          FUN = function(x) round(median(x, na.rm = TRUE), 2))
+  dat2_agg1h[, 1] <- paste0(dat2_agg1h[, 1], ":00")
+  names(dat2_agg1h)[1] <- "datetime"
+  dat2_agg1h$datetime <- strptime(dat2_agg1h$datetime, format = "%Y-%m-%d %H:%M")
   
+  write.csv(dat2_agg1h, paste0(i, "/data/out/", plt, "_mrg_agg01h.csv"), 
+            row.names = FALSE)
+  
+  # 10m aggregation of gappy time series
+  dat2_agg10m <- aggregate(dat2[, 2:ncol(dat2)], by = list(substr(dat2[, 1], 1, 15)), 
+                    FUN = function(x) round(median(x, na.rm = TRUE), 2))
+  dat2_agg10m[, 1] <- paste0(dat2_agg10m[, 1], "0")
+  names(dat2_agg10m)[1] <- "datetime"
+  
+  write.csv(dat2_agg10m, paste0(i, "/data/out/", plt, "_mrg_agg10m.csv"), 
+            row.names = FALSE)
+  
+  # Selection of training data
   index <- rowSums(is.na(dat2[, 2:(ncol(dat2)-1)])) == 0 & 
     is.na(dat2[, ncol(dat2)])
-  
-#   dat2$waterET <- factor(dat2$waterET)
   
   dat2.train <- dat2[complete.cases(dat2[, -1]), 2:ncol(dat2)]
   dat2.test <- dat2[index, ]
@@ -63,7 +80,7 @@ lapply(srunWorkspaces, function(i) {
   
   write.csv(dat3, paste0(i, "/data/out/", plt, "_mrg_rf.csv"), row.names = FALSE)
   
-  # 1h aggregation  
+  # 1h aggregation of gap-filled time series
   dat4 <- aggregate(dat3[, 2:ncol(dat3)], by = list(substr(dat3[, 1], 1, 13)), 
                     FUN = function(x) round(median(x, na.rm = TRUE), 2))
   dat4[, 1] <- paste0(dat4[, 1], ":00")
@@ -74,7 +91,7 @@ lapply(srunWorkspaces, function(i) {
   write.csv(dat4, paste0(i, "/data/out/", plt, "_mrg_rf_agg01h.csv"), 
             row.names = FALSE)
   
-  # 10m aggregation
+  # 10m aggregation of gap-filled time series
   dat5 <- aggregate(dat3[, 2:ncol(dat3)], by = list(substr(dat3[, 1], 1, 15)), 
                     FUN = function(x) round(median(x, na.rm = TRUE), 2))
   dat5[, 1] <- paste0(dat5[, 1], "0")
@@ -82,11 +99,6 @@ lapply(srunWorkspaces, function(i) {
   
   write.csv(dat5, paste0(i, "/data/out/", plt, "_mrg_rf_agg10m.csv"), 
             row.names = FALSE)
-  
-#   ggplot(aes(x = datetime, y = waterET), data = dat4) + 
-#     geom_histogram(stat = "identity") + 
-#     geom_hline(aes(y = 0), colour = "darkgrey") + 
-#     labs(x = "Time [h]", y = "Evapotranspiration [mm/h]") + 
-#     theme_bw()
-  
+
+  return(dat5)
 })
