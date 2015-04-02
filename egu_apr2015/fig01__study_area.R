@@ -24,8 +24,8 @@ ch_plt_sls <- c("sav5", "sav4",
                 "hel1")
 
 # bing aerial image
-rst_kili <- kiliAerial(minNumTiles = 60, rasterize = TRUE)
-spl_kili <- rgb2spLayout(rst_kili, alpha = 1)
+rst_kili <- kiliAerial(minNumTiles = 40, rasterize = TRUE)
+spl_kili <- rgb2spLayout(rst_kili, alpha = .9)
 
 # research plots
 spp_plt <- readOGR(dsn = ch_dir_crd, layer = ch_fls_crd)
@@ -64,7 +64,7 @@ p_bing <- spplot(spp_plt_amp_sls, zcol = "PlotID",
 
 # figure
 png(paste0(ch_dir_out, "fig01__study_area.png"), width = 30, height = 24, 
-    units = "cm", pointsize = 21, res = 600)
+    units = "cm", pointsize = 21, res = 300)
 
 # viewport for visualization of study area
 vp1 <- viewport(x = 0, y = 1, height = .9, width = 1, 
