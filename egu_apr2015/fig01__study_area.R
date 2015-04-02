@@ -5,10 +5,10 @@ library(Rsenal)
 library(latticeExtra)
 library(grid)
 
-# path for output storage
-ch_dir_ppr <- "/media/permanent/publications/paper/detsch_et_al__spotty_evapotranspiration/"
+# path: output storage
+ch_dir_out <- "/media/permanent/phd/egu_2015/poster/fig/"
 
-# path and file with research plot coordinates
+# path: research plot coordinates
 ch_dir_crd <- "/media/permanent/kilimanjaro/coordinates/coords/"
 ch_fls_crd <- "PlotPoles_ARC1960_mod_20140807_final"
 
@@ -61,8 +61,6 @@ p_bing <- spplot(spp_plt_amp_sls, zcol = "PlotID",
 
 
 ## visualization
-
-ch_dir_out <- "/media/permanent/phd/egu_2015/poster/fig/"
 
 # figure
 png(paste0(ch_dir_out, "fig01__study_area.png"), width = 30, height = 24, 
