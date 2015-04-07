@@ -11,6 +11,9 @@ ch_dir_out <- "/media/permanent/phd/egu_2015/poster/fig/"
 ch_dir_varimp <- "../../repositories/paper_kilimanjaro_scintillometer/"
 ch_fls_varimp <- "data/reg_stats_whr.RData"
 
+# functions
+source(paste0(ch_dir_varimp, "R/slsPlots.R"))
+
 
 ## data
 
@@ -52,9 +55,10 @@ var_stats[, 1] <- factor(var_stats[, 1], levels = slsPlots())
 hmap <- levelplot(df_varimp_mlt ~ variable * plot, data = var_stats,
                   col.regions = clr(101), at = seq(0, 100, 1),
                   asp = 1, as.table = TRUE,
-                  ylab = "Research site", xlab = "Parameter",
-                  scales = list(x = list(rot = 45)),
-                  main = "Mean variable importance",
+                  ylab = list(label = "Research site", cex = 1.5), , xlab = "",
+                  scales = list(x = list(rot = 45, cex = 1.25), 
+                                y = list(cex = 1.25)),
+                  main = list(label = "Mean variable importance", cex = 1.6),
                   colorkey = list(space = "top",
                                   width = 1, height = 0.75),
                   panel=function(...) {
