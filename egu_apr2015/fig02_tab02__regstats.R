@@ -41,7 +41,3 @@ png(paste0(ch_dir_out, "fig02__reg_stats.png"), width = 35, height = 20,
 do.call(function(...) grid.arrange(..., ncol = 4, as.table = TRUE), 
         ls_rf_scores_dryssn_vis)
 dev.off()
-
-
-###########
-latticeCombineGrid(ls_rf_scores_dryssn_vis, x.same = TRUE, y.same = TRUE)
