@@ -1,0 +1,53 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+
+\title{Static \textbf{leaflet} map using \textbf{knitr}}
+\author{\vspace{-10ex}}
+\date{\vspace{-5ex}}
+
+\begin{document}
+
+<<knitr_options, include=FALSE>>=
+opts_chunk$set(warning = FALSE, message = FALSE, tidy = FALSE)
+@
+
+\maketitle
+
+This is an example on how to display static \textbf{leaflet} maps using \LaTeX.
+
+<<create_map, eval = FALSE>>=
+m <- leaflet() %>%
+  addTiles() %>%
+  addMarkers(lng = -77.03673, lat = 38.89761)
+
+m
+@
+
+<<display_map, fig.height = 8, echo = FALSE>>=
+## install 'webshot' package
+# library(devtools)
+# install_github("wch/webshot")
+
+## load packages
+library(leaflet)
+library(htmlwidgets)
+library(webshot)
+
+## create map
+m <- leaflet() %>%
+  addTiles() %>%
+  addMarkers(lng = -77.03673, lat = 38.89761)
+
+## save html to png
+saveWidget(m, "leaflet_map.html", selfcontained = FALSE)
+webshot("leaflet_map.html", file = "leaflet_map.png",
+        cliprect = "viewport")
+@
+
+% display image 
+\begin{center}
+\includegraphics[width = 0.75\textwidth]{leaflet_map.png}
+\end{center}
+
+\end{document}
