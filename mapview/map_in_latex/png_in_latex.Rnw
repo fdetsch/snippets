@@ -63,6 +63,6 @@ webshot("leaflet_map.html", file = "leaflet_map.png",
     \includegraphics[width = 0.75\textwidth]{leaflet_map.png}
     \caption{Static \textbf{leaflet} map.}
   \end{center}
-  \end{figure}
+\end{figure}
   
 \end{document}
