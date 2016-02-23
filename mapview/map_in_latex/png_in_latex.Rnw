@@ -1,21 +1,29 @@
+%%% preamble
 \documentclass[12pt]{article}
 
+%% packages
 \usepackage{graphicx}
 
+%% title
 \title{Static \textbf{leaflet} map using \textbf{knitr}}
 \author{\vspace{-10ex}}
 \date{\vspace{-5ex}}
 
-\begin{document}
 
-<<knitr_options, include=FALSE>>=
-opts_chunk$set(warning = FALSE, message = FALSE, tidy = FALSE)
+%%% document
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%% global chunk options
+<<knitr_options, include=FALSE, echo=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, tidy = FALSE)
 @
 
 \maketitle
 
 This is an example on how to display static \textbf{leaflet} maps using \LaTeX.
 
+%% unevaluated leaflet code, create map
 <<create_map, eval = FALSE>>=
 m <- leaflet() %>%
   addTiles() %>%
@@ -24,6 +32,7 @@ m <- leaflet() %>%
 m
 @
 
+%% evaluated leaflet code, create map and save as png
 <<display_map, fig.height = 8, echo = FALSE>>=
 ## install 'webshot' package
 # library(devtools)
@@ -43,11 +52,17 @@ m <- leaflet() %>%
 saveWidget(m, "leaflet_map.html", selfcontained = FALSE)
 webshot("leaflet_map.html", file = "leaflet_map.png",
         cliprect = "viewport")
+
+## optional solution to display image using `include_graphics`
+# p <- knitr::include_graphics("leaflet_map.png")
 @
 
-% display image 
-\begin{center}
-\includegraphics[width = 0.75\textwidth]{leaflet_map.png}
-\end{center}
-
+%% display image
+\begin{figure}[!htbd]
+  \begin{center}
+    \includegraphics[width = 0.75\textwidth]{leaflet_map.png}
+    \caption{Static \textbf{leaflet} map.}
+  \end{center}
+  \end{figure}
+  
 \end{document}
