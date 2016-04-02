@@ -213,9 +213,9 @@ p_cellts <- ggplot(aes(x = date, y = value, color = variable),
         axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
         strip.text = element_text(size = 12), 
         legend.position = c(.5, 1.06), legend.direction = "horizontal", 
-        legend.key.size = unit(1, "cm"), 
+        legend.key.size = unit(1.5, "cm"), 
         legend.key = element_rect(colour = "transparent", fill = NA), 
-        legend.text = element_text(size = 15), 
+        legend.text = element_text(size = 16), 
         legend.background = element_rect(fill = NA))
   
 # ## deregister parallel backend

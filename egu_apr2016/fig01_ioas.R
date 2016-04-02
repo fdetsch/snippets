@@ -343,7 +343,7 @@ text1 = list("sp.text", c(37.06, -3.355), "0", cex = 1.2, font = 2)
 text2 = list("sp.text", c(37.16, -3.355), "10 km", cex = 1.2, font = 2)
 
 arrow <- list("SpatialPolygonsRescale", layout.north.arrow(type = 1), 
-              offset = c(37.01, -3.4), scale = .06, fill = "black", lwd = 2)
+              offset = c(37.01, -3.405), scale = .07, fill = "black", lwd = 1.2)
 
 p_bing <- spplot(rst_kili[[1]], col.regions = NA, colorkey = FALSE, 
                  sp.layout = list(rgb2spLayout(rst_kili, quantiles = c(0, 1)), 
@@ -355,7 +355,7 @@ p_bing <- spplot(rst_kili[[1]], col.regions = NA, colorkey = FALSE,
 #                                        txt = "\uA9 Google Maps", 
 #                                        font = 2, cex = .4, col = "black")),
                  xlim = c(num_xmin, num_xmax), ylim = c(num_ymin, num_ymax), 
-                 scales = list(draw = TRUE, cex = 1.5))
+                 scales = list(draw = TRUE, cex = 1.2))
 
 ## insert values
 ## gimms stack
@@ -397,7 +397,7 @@ p_lbl <- spplot(spg_ioa_gimms, "ID", colorkey = FALSE, col.regions = "transparen
                 panel = function(...) {
                   panel.gridplot(..., border = "transparent")
                   panel.text(..., labels = spg_ioa_gimms@data$ID, 
-                             col = "white", font = 2, adj = c(-.4, 2), 
+                             col = "white", font = 2, adj = c(-.6, 2.2), 
                              cex = 1)
                 })
 
@@ -428,7 +428,7 @@ for (i in seq(3, 27, 4))
   g_cellts$heights[[i]] = unit(.2,"in")
 
 ## write to file
-tiff("/media/permanent/phd/egu_2016/poster/img/figure02.tiff", width = 50, 
+tiff("/media/permanent/phd/egu_2016/poster/img/figure01.tiff", width = 50, 
      height = 26, units = "cm", res = 500, compression = "lzw", pointsize = 18)
 plot.new()
 vp0 <- viewport(x = -.03, y = 0, width = .5, height = 1, 
@@ -455,7 +455,7 @@ pushViewport(vp2)
 # print(p_cellts, newpage = FALSE)
 grid.draw(g_cellts)
 
-grid.text("c)", x = .09, y = .985, gp = gpar(font = 2, cex = 1))
+grid.text("c)", x = .09, y = .985, gp = gpar(font = 2, cex = .8))
 dev.off()
 
 
@@ -463,4 +463,4 @@ dev.off()
 stopCluster(supcl)
 
 detach("package:ggplot2", unload=TRUE)
-install.packages("inst/extdata/ggplot2_2.0.0.tar.gz", repos = NULL)
+install.packages("inst/extdata/ggplot2_2.1.0.tar.gz", repos = NULL)
