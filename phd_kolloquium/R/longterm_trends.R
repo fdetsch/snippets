@@ -36,14 +36,15 @@ rst_mk <- raster("data/gimms_ndvi3g_001.tif")
 
 p_mk <- spplot(rst_mk, col.regions = brewer.pal(10, "BrBG"), 
                xlab = NULL, ylab = NULL, 
-               colorkey = list(draw = TRUE, width = .6, height = .6),
-               at = seq(-.5, .5, .1), scales = list(draw = TRUE, cex = .8),  
+               colorkey = list(draw = TRUE, space = "top", width = .6, height = .6),
+               at = seq(-.5, .5, .1), scales = list(draw = TRUE, cex = .8, 
+                                                    y = list(rot = 90)),  
                main = list(expression(bold("Kendall's" ~ tau)), 
-                           vjust = 2, cex = 1)) + 
+                           vjust = .5, hjust = .4, cex = 1)) + 
   as.layer(p_dem)
 
 ## manuscript version
-tiff("img/mannkendall.tiff", height = 10, width = 14, units = "cm", res = 300, 
+tiff("img/mannkendall.tiff", height = 12, width = 12, units = "cm", res = 300, 
      compression = "lzw")
 plot.new()
 print(p_mk, newpage = FALSE)
